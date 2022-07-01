@@ -1,0 +1,61 @@
+import enc_generator
+
+file = open('src.txt')
+t = file.read()
+
+alphabet = []
+for i in t:
+    if i not in alphabet:
+        alphabet.append(i)
+
+alphabet.sort()
+print(alphabet)
+
+
+def frequency_analysis(text: str):
+    analiz = {}
+    for i in alphabet:
+        count = 0
+        for j in text:
+            if i == j:
+                count += 1
+        analiz[i] = count
+    return analiz
+
+
+encrypt_text = enc_generator.encrypt(t)
+
+
+def break_simple_sub_cipher(encrypted_text: str, freq_table: dict[str: int]):
+    freq_table_encrypted_text = frequency_analysis(encrypted_text)
+
+    reverse_text = {}
+    for k, v in freq_table.items():
+        if v in reverse_text:
+            reverse_text[v].append(k)
+        else:
+            reverse_text[v] = [k]
+
+    reverse_encrypted_text = {}
+    for k, v in freq_table.items():
+        if v in reverse_encrypted_text:
+            reverse_encrypted_text[v].append(k)
+        else:
+            reverse_encrypted_text[v] = [k]
+
+    alphabet = {}
+    for i in freq_table:
+        for j in freq_table_encrypted_text:
+            if freq_table[i] == freq_table_encrypted_text[j]:
+                alphabet[j] = i
+
+    f2 = ''
+    for n in encrypted_text:
+        f2 += alphabet[n]
+
+    return f2
+
+
+print(break_simple_sub_cipher(encrypt_text, frequency_analysis(t)))
+
+file.close()
